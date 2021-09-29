@@ -1,3 +1,4 @@
+import 'package:better_bowling_ball/bt_page.dart';
 import 'package:better_bowling_ball/history_page.dart';
 import 'package:better_bowling_ball/new_game_page.dart';
 import 'package:better_bowling_ball/single_throw_page.dart';
@@ -20,7 +21,8 @@ class MyApp extends StatelessWidget {
       routes: {
         'newGame': (_) => const NewGamePage(),
         'singleThrow': (_) => const SingleThrowPage(),
-        'history': (_) => const HistoryPage()
+        'history': (_) => const HistoryPage(),
+        'bt': (_) => const BtPage(),
       },
     );
   }
@@ -63,6 +65,13 @@ class _WelcomePageState extends State<WelcomePage> {
                 const Spacer(
                   flex: 16,
                 ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pushNamed('bt');
+                  },
+                  child: const Text("Bluetooth"),
+                ),
+                Spacer(),
                 ElevatedButton(
                   onPressed: () {
                     Navigator.of(context).pushNamed('newGame');

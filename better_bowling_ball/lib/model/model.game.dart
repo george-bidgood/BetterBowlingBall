@@ -18,12 +18,8 @@ class Game {
   final String notes;
   final DateTime date;
 
-  const Game({
-    this.id,
-    required this.name,
-    required this.notes,
-    required this.date
-  });
+  const Game(
+      {this.id, required this.name, required this.notes, required this.date});
 
   Game copy({
     int? id,
@@ -32,23 +28,22 @@ class Game {
     DateTime? date,
   }) =>
       Game(
-        id: id ?? this.id,
-        name: name ?? this.name,
-        notes: notes ?? this.notes,
-        date: date ?? this.date
-      );
+          id: id ?? this.id,
+          name: name ?? this.name,
+          notes: notes ?? this.notes,
+          date: date ?? this.date);
 
   static Game fromJson(Map<String, Object?> json) => Game(
-    id: json[GameFields.id] as int?,
-    name: json[GameFields.name] as String,
-    notes: json[GameFields.notes] as String,
-    date: DateTime.parse(json[GameFields.date] as String),
-  );
+        id: json[GameFields.id] as int?,
+        name: json[GameFields.name] as String,
+        notes: json[GameFields.notes] as String,
+        date: DateTime.parse(json[GameFields.date] as String),
+      );
 
   Map<String, Object?> toJson() => {
-    GameFields.id: id,
-    GameFields.name: name,
-    GameFields.notes: notes,
-    GameFields.date: date.toIso8601String(),
-  };
+        GameFields.id: id,
+        GameFields.name: name,
+        GameFields.notes: notes,
+        GameFields.date: date.toIso8601String(),
+      };
 }

@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
         'newGame': (_) => const NewGamePage(),
         'singleThrow': (_) => const SingleThrowPage(),
         'history': (_) => const HistoryPage(),
-        'bt': (_) => const BtPage(),
+        'bt': (_) => BtPage(),
       },
     );
   }

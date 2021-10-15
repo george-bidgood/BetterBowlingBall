@@ -60,24 +60,29 @@ class _BtPageState extends State<BtPage> {
                 child:
                     const Text('Connect', style: TextStyle(color: Colors.blue)),
                 onPressed: () {
-                  setState(() async {
-                    widget.flutterBlue.stopScan();
-                    try {
-                      await device.connect();
-                    } catch (e) {
-                      if (e.toString() != "already_connected") {
-                        rethrow;
-                      }
-                    } finally {
-                      _services = await device.discoverServices();
-                    }
-                    _connectedDevice = device;
-                  });
+                  _connectDevice(device);
                 })
           ])));
     }
     return ListView(
         padding: const EdgeInsets.all(8), children: <Widget>[...containers]);
+  }
+
+  Future<void> _connectDevice(BluetoothDevice device) async {
+    widget.flutterBlue.stopScan();
+    try {
+      await device.connect();
+    } catch (e) {
+      if (e.toString() != "already_connected") {
+        rethrow;
+      }
+    } finally {
+      List<BluetoothService> servicesHolder = await device.discoverServices();
+      setState(() {
+        _services = servicesHolder;
+        _connectedDevice = device;
+      });
+    }
   }
 
   @override
@@ -89,12 +94,12 @@ class _BtPageState extends State<BtPage> {
 
   ListView _buildView() {
     if (_connectedDevice != null) {
-      return _buildConnectDeviceView();
+      return _buildConnectedDeviceView();
     }
     return _buildListViewOfDevices();
   }
 
-  ListView _buildConnectDeviceView() {
+  ListView _buildConnectedDeviceView() {
     List<Container> containers = [];
 
     for (BluetoothService service in _services) {

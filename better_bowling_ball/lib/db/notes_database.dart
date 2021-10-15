@@ -1,9 +1,9 @@
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:sqflite_database_example/model/model.bowl.dart';
-import 'package:sqflite_database_example/model/model.game.dart';
-import 'package:sqflite_database_example/model/model.point.dart';
-import 'package:sqflite_database_example/model/note.dart';
+import 'package:better_bowling_ball/model/model.bowl.dart';
+import 'package:better_bowling_ball/model/model.game.dart';
+import 'package:better_bowling_ball/model/model.point.dart';
+import 'package:better_bowling_ball/model/note.dart';
 
 class NotesDatabase {
   static final NotesDatabase instance = NotesDatabase._init();
@@ -174,13 +174,11 @@ CREATE TABLE $tablePoints (
   Future<List<Point>> readPoints(int id) async {
     final db = await instance.database;
 
-    final result = await db.query(
-      tablePoints,
-      columns: PointFields.values,
-      where: '${PointFields.bowlId} = ?',
-      whereArgs: [id],
-      orderBy: '${PointFields.sequenceId} ASC'
-    );
+    final result = await db.query(tablePoints,
+        columns: PointFields.values,
+        where: '${PointFields.bowlId} = ?',
+        whereArgs: [id],
+        orderBy: '${PointFields.sequenceId} ASC');
 
     return result.map((json) => Point.fromJson(json)).toList();
   }

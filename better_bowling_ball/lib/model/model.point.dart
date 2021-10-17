@@ -1,5 +1,4 @@
-
-final String tablePoints = 'points';
+const String tablePoints = 'points';
 
 class PointFields {
   static final List<String> values = [
@@ -7,12 +6,12 @@ class PointFields {
     id, bowlId, sequenceId, xPos, yPos, time
   ];
 
-  static final String id = '_id';
-  static final String bowlId = 'bowlId';
-  static final String sequenceId = 'sequenceId';
-  static final String xPos = 'xPos';
-  static final String yPos = 'yPos';
-  static final String time = 'time';
+  static const String id = '_id';
+  static const String bowlId = 'bowlId';
+  static const String sequenceId = 'sequenceId';
+  static const String xPos = 'xPos';
+  static const String yPos = 'yPos';
+  static const String time = 'time';
 }
 
 class Point {
@@ -50,20 +49,20 @@ class Point {
       );
 
   static Point fromJson(Map<String, Object?> json) => Point(
-    id: json[PointFields.id] as int?,
-    bowlId: json[PointFields.bowlId] as int,
-    sequenceId: json[PointFields.sequenceId] as int,
-    xPos: json[PointFields.xPos] as double,
-    yPos: json[PointFields.yPos] as double,
-    time: DateTime.parse(json[PointFields.time] as String),
-  );
+        id: json[PointFields.id] as int?,
+        bowlId: json[PointFields.bowlId] as int,
+        sequenceId: json[PointFields.sequenceId] as int,
+        xPos: json[PointFields.xPos] as double,
+        yPos: json[PointFields.yPos] as double,
+        time: DateTime.parse(json[PointFields.time] as String),
+      );
 
   Map<String, Object?> toJson() => {
-    PointFields.id: id,
-    PointFields.bowlId: bowlId,
-    PointFields.sequenceId: sequenceId,
-    PointFields.xPos: xPos,
-    PointFields.yPos: yPos,
-    PointFields.time: time.toIso8601String(),
-  };
+        PointFields.id: id,
+        PointFields.bowlId: bowlId,
+        PointFields.sequenceId: sequenceId,
+        PointFields.xPos: xPos,
+        PointFields.yPos: yPos,
+        PointFields.time: time.toIso8601String(),
+      };
 }

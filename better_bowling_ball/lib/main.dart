@@ -1,5 +1,5 @@
 import 'package:better_bowling_ball/bt_page.dart';
-import 'package:better_bowling_ball/history_page.dart';
+import 'package:better_bowling_ball/history/history_page.dart';
 import 'package:better_bowling_ball/new_game_page.dart';
 import 'package:better_bowling_ball/single_throw_page.dart';
 import 'package:flutter/material.dart';
@@ -47,7 +47,7 @@ class _WelcomePageState extends State<WelcomePage> {
         body: SafeArea(
           child: Container(
             color: Colors.white,
-            padding: EdgeInsets.fromLTRB(20, 0, 20, 50),
+            padding: const EdgeInsets.fromLTRB(20, 0, 20, 50),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -71,7 +71,7 @@ class _WelcomePageState extends State<WelcomePage> {
                   },
                   child: const Text("Bluetooth"),
                 ),
-                Spacer(),
+                const Spacer(),
                 ElevatedButton(
                   onPressed: () {
                     Navigator.of(context).pushNamed('newGame');

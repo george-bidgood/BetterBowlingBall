@@ -11,7 +11,7 @@ class _SingleThrowPageState extends State<SingleThrowPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("History")),
+      appBar: AppBar(title: const Text("Single Throw")),
       body: const Center(child: Text('Single Throw Page')),
     );
   }

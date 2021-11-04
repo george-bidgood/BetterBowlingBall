@@ -2,9 +2,11 @@ import 'package:better_bowling_ball/db/bowling_database.dart';
 import 'package:better_bowling_ball/model/model.game.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_blue/flutter_blue.dart';
 
 class NewGamePage extends StatefulWidget {
-  const NewGamePage({Key? key}) : super(key: key);
+  NewGamePage({Key? key}, required this.readValues) : super(key: key);
+  final Map<Guid, List<int>> readValues = <Guid, List<int>>{};
 
   @override
   _NewGamePageState createState() => _NewGamePageState();

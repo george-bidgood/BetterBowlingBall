@@ -2,13 +2,17 @@ import 'package:better_bowling_ball/bt_page.dart';
 import 'package:better_bowling_ball/history/history_page.dart';
 import 'package:better_bowling_ball/new_game_page.dart';
 import 'package:better_bowling_ball/single_throw_page.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_blue/flutter_blue.dart';
 
-void main() => runApp(const MyApp());
+void main() => runApp(MyApp());
 
 // This widget is the root of your application.
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  MyApp({Key? key}) : super(key: key);
+  final FlutterBlue flutterBlue = FlutterBlue.instance;
+  final Map<Guid, List<int>> readValues = <Guid, List<int>>{};
 
   @override
   Widget build(BuildContext context) {
@@ -19,10 +23,10 @@ class MyApp extends StatelessWidget {
       ),
       home: const WelcomePage(title: 'Welcome, <username>'),
       routes: {
-        'newGame': (_) => const NewGamePage(),
+        'newGame': (_) => NewGamePage(readValues: readValues),
         'singleThrow': (_) => const SingleThrowPage(),
         'history': (_) => const HistoryPage(),
-        'bt': (_) => BtPage(),
+        'bt': (_) => BtPage(flutterBlue: flutterBlue, readValues: readValues),
       },
     );
   }

@@ -4,12 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 
 class BtPage extends StatefulWidget {
-  BtPage({Key? key}) : super(key: key);
+  FlutterBlue flutterBlue;
+  BtPage({Key? key, required this.flutterBlue, required this.readValues})
+      : super(key: key);
 
   final String title = "Bluetooth";
-  final FlutterBlue flutterBlue = FlutterBlue.instance;
+
   final List<BluetoothDevice> devicesList = [];
-  final Map<Guid, List<int>> readValues = <Guid, List<int>>{};
+  Map<Guid, List<int>> readValues = <Guid, List<int>>{};
 
   @override
   _BtPageState createState() => _BtPageState();
@@ -71,7 +73,7 @@ class _BtPageState extends State<BtPage> {
   Future<void> _connectDevice(BluetoothDevice device) async {
     widget.flutterBlue.stopScan();
     try {
-      await device.connect();
+      await device.connect(autoConnect: false);
     } catch (e) {
       if (e.toString() != "already_connected") {
         rethrow;
@@ -124,6 +126,12 @@ class _BtPageState extends State<BtPage> {
                     ..._buildReadWriteNotifyButton(characteristic),
                   ],
                 ),
+                Row(
+                  children: <Widget>[
+                    Text('Value: ' +
+                        widget.readValues[characteristic.uuid].toString()),
+                  ],
+                ),
                 Divider(),
               ],
             ),
@@ -160,7 +168,15 @@ class _BtPageState extends State<BtPage> {
             padding: const EdgeInsets.symmetric(horizontal: 4),
             child: ElevatedButton(
               child: Text('READ', style: TextStyle(color: Colors.white)),
-              onPressed: () {},
+              onPressed: () async {
+                var sub = characteristic.value.listen((value) {
+                  setState(() {
+                    widget.readValues[characteristic.uuid] = value;
+                  });
+                });
+                await characteristic.read();
+                sub.cancel();
+              },
             ),
           ),
         ),
@@ -190,7 +206,13 @@ class _BtPageState extends State<BtPage> {
             padding: const EdgeInsets.symmetric(horizontal: 4),
             child: ElevatedButton(
               child: Text('NOTIFY', style: TextStyle(color: Colors.white)),
-              onPressed: () {},
+              onPressed: () async {
+                characteristic.value.listen((value) {
+                  widget.readValues[characteristic.uuid] = value;
+                  print(value);
+                });
+                await characteristic.setNotifyValue(true);
+              },
             ),
           ),
         ),

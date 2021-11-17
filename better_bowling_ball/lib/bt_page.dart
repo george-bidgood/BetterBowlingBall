@@ -2,16 +2,16 @@ import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
+import 'package:better_bowling_ball/globals.dart';
 
 class BtPage extends StatefulWidget {
-  FlutterBlue flutterBlue;
-  BtPage({Key? key, required this.flutterBlue, required this.readValues})
-      : super(key: key);
-
+  FlutterBlue flutterBlue = GlobalData.flutterBlue;
+  BtPage({Key? key}) : super(key: key);
+  Guid ballService = Guid("6e400001-b5a3-f393-e0a9-e50e24dcca9e");
   final String title = "Bluetooth";
 
   final List<BluetoothDevice> devicesList = [];
-  Map<Guid, List<int>> readValues = <Guid, List<int>>{};
+  Map<Guid, List<int>> readValues = {};
 
   @override
   _BtPageState createState() => _BtPageState();
@@ -22,7 +22,7 @@ class _BtPageState extends State<BtPage> {
   List<BluetoothService> _services = [];
 
   _addDeviceToList(final BluetoothDevice device) {
-    if (!widget.devicesList.contains(device)) {
+    if (!widget.devicesList.contains(device) && mounted) {
       setState(() {
         widget.devicesList.add(device);
       });
@@ -44,7 +44,11 @@ class _BtPageState extends State<BtPage> {
         _addDeviceToList(result.device);
       }
     });
-    widget.flutterBlue.startScan();
+    widget.flutterBlue.isScanning.listen((bool isScanningBool) {
+      if (mounted && !isScanningBool) {
+        widget.flutterBlue.startScan(withServices: [widget.ballService]);
+      }
+    });
   }
 
   ListView _buildListViewOfDevices() {
@@ -183,6 +187,8 @@ class _BtPageState extends State<BtPage> {
       );
     }
     if (characteristic.properties.write) {
+      GlobalData.writeCharacteristic = characteristic;
+      GlobalData.accessible = true;
       buttons.add(
         ButtonTheme(
           minWidth: 10,
@@ -191,7 +197,9 @@ class _BtPageState extends State<BtPage> {
             padding: const EdgeInsets.symmetric(horizontal: 4),
             child: ElevatedButton(
               child: Text('WRITE', style: TextStyle(color: Colors.white)),
-              onPressed: () {},
+              onPressed: () {
+                characteristic.write([0], withoutResponse: true);
+              },
             ),
           ),
         ),
@@ -208,7 +216,7 @@ class _BtPageState extends State<BtPage> {
               child: Text('NOTIFY', style: TextStyle(color: Colors.white)),
               onPressed: () async {
                 characteristic.value.listen((value) {
-                  widget.readValues[characteristic.uuid] = value;
+                  GlobalData.dataValues.add(value);
                   print(value);
                 });
                 await characteristic.setNotifyValue(true);

@@ -5,8 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 
 class NewGamePage extends StatefulWidget {
-  NewGamePage({Key? key}, required this.readValues) : super(key: key);
-  final Map<Guid, List<int>> readValues = <Guid, List<int>>{};
+  NewGamePage({Key? key}) : super(key: key);
 
   @override
   _NewGamePageState createState() => _NewGamePageState();

@@ -11,8 +11,6 @@ void main() => runApp(MyApp());
 // This widget is the root of your application.
 class MyApp extends StatelessWidget {
   MyApp({Key? key}) : super(key: key);
-  final FlutterBlue flutterBlue = FlutterBlue.instance;
-  final Map<Guid, List<int>> readValues = <Guid, List<int>>{};
 
   @override
   Widget build(BuildContext context) {
@@ -23,10 +21,10 @@ class MyApp extends StatelessWidget {
       ),
       home: const WelcomePage(title: 'Welcome, <username>'),
       routes: {
-        'newGame': (_) => NewGamePage(readValues: readValues),
+        'newGame': (_) => NewGamePage(),
         'singleThrow': (_) => const SingleThrowPage(),
         'history': (_) => const HistoryPage(),
-        'bt': (_) => BtPage(flutterBlue: flutterBlue, readValues: readValues),
+        'bt': (_) => BtPage(),
       },
     );
   }

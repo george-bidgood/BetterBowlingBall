@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:better_bowling_ball/globals.dart';
 
 class SingleThrowPage extends StatefulWidget {
   const SingleThrowPage({Key? key}) : super(key: key);

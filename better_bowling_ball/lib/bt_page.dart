@@ -82,6 +82,8 @@ class _BtPageState extends State<BtPage> {
       if (e.toString() != "already_connected") {
         rethrow;
       }
+      device.disconnect();
+      device.connect();
     } finally {
       List<BluetoothService> servicesHolder = await device.discoverServices();
       setState(() {
@@ -163,7 +165,7 @@ class _BtPageState extends State<BtPage> {
       BluetoothCharacteristic characteristic) {
     List<ButtonTheme> buttons = [];
 
-    if (characteristic.properties.read) {
+    if (!characteristic.properties.read) {
       buttons.add(
         ButtonTheme(
           minWidth: 10,
@@ -173,13 +175,7 @@ class _BtPageState extends State<BtPage> {
             child: ElevatedButton(
               child: Text('READ', style: TextStyle(color: Colors.white)),
               onPressed: () async {
-                var sub = characteristic.value.listen((value) {
-                  setState(() {
-                    widget.readValues[characteristic.uuid] = value;
-                  });
-                });
-                await characteristic.read();
-                sub.cancel();
+                _connectedDevice!.disconnect();
               },
             ),
           ),
@@ -206,6 +202,7 @@ class _BtPageState extends State<BtPage> {
       );
     }
     if (characteristic.properties.notify) {
+      int i = 0;
       buttons.add(
         ButtonTheme(
           minWidth: 10,
@@ -216,8 +213,9 @@ class _BtPageState extends State<BtPage> {
               child: Text('NOTIFY', style: TextStyle(color: Colors.white)),
               onPressed: () async {
                 characteristic.value.listen((value) {
-                  GlobalData.dataValues.add(value);
-                  print(value);
+                  List<int> new_val = GlobalData.dataByteFixer(value);
+                  print(i);
+                  i++;
                 });
                 await characteristic.setNotifyValue(true);
               },

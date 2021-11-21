@@ -276,9 +276,7 @@ class Processing {
         footPlacement: oldBowl.footPlacement,
         pinHit: oldBowl.pinHit,
         timestamp: oldBowl.timestamp)
-
-
-    )
+    );
 
 
 

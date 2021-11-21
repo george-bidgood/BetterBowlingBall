@@ -128,18 +128,18 @@ class BowlingDatabase {
     }
   }
 
-  Future<Game> readBowl(int id) async {
+  Future<Bowl> readBowl(int id) async {
     final db = await instance.database;
 
     final maps = await db.query(
       tableGames,
-      columns: GameFields.values,
-      where: '${GameFields.id} = ?',
+      columns: BowlFields.values,
+      where: '${BowlFields.id} = ?',
       whereArgs: [id],
     );
 
     if (maps.isNotEmpty) {
-      return Game.fromJson(maps.first);
+      return Bowl.fromJson(maps.first);
     } else {
       throw Exception('ID $id not found');
     }
@@ -168,10 +168,10 @@ class BowlingDatabase {
 
     return result.map((json) => Game.fromJson(json)).toList();
   }
-
+  //
   // Future<int> update(Note note) async {
   //   final db = await instance.database;
-
+  //
   //   return db.update(
   //     tableNotes,
   //     note.toJson(),
@@ -179,6 +179,17 @@ class BowlingDatabase {
   //     whereArgs: [note.id],
   //   );
   // }
+
+  Future<int> update(Bowl bowl) async {
+    final db = await instance.database;
+
+    return db.update(
+      tableGames,
+      bowl.toJson(),
+      where: '${BowlFields.id} = ?',
+      whereArgs: [bowl.id],
+    );
+  }
 
   Future close() async {
     final db = await instance.database;

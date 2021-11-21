@@ -31,6 +31,7 @@ import 'dart:math';
 
 import 'package:better_bowling_ball/db/bowling_database.dart';
 import 'package:better_bowling_ball/model/model.point.dart';
+import 'package:better_bowling_ball/model/model.bowl.dart';
 class Processing {
   // static processData(List<List> data, double xFinish, double yFinish, int bowlId) {
   //   //1637027004646092,7081,6903,359,6497,5897,8387
@@ -123,7 +124,7 @@ class Processing {
     return (date1 - date2)/1000000.0;
   }
 
-  static processData2(List<List> data, double xStart, double xFinish, double yFinish, int bowlId) {
+  static processData2(List<List> data, double xStart, double xFinish, double yFinish, int bowlId) async {
 
     // find start of throw
     int startTime = 0;
@@ -263,6 +264,21 @@ class Processing {
         time: DateTime.fromMicrosecondsSinceEpoch(startTime + (i*0.1*1000000).round()),
       ));
     }
+
+    var oldBowl = await BowlingDatabase.instance.readBowl(bowlId);
+
+    BowlingDatabase.instance.update(Bowl(
+        speed: Speed,
+        rpm: rps,
+        xRotation: points[3][4],
+        yRotation: points[3][5],
+        zRotation: points[3][5],
+        footPlacement: oldBowl.footPlacement,
+        pinHit: oldBowl.pinHit,
+        timestamp: oldBowl.timestamp)
+
+
+    )
 
 
 

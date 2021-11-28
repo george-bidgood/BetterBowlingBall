@@ -32,6 +32,7 @@ import 'dart:math';
 import 'package:better_bowling_ball/db/bowling_database.dart';
 import 'package:better_bowling_ball/model/model.point.dart';
 import 'package:better_bowling_ball/model/model.bowl.dart';
+
 class Processing {
   // static processData(List<List> data, double xFinish, double yFinish, int bowlId) {
   //   //1637027004646092,7081,6903,359,6497,5897,8387
@@ -115,28 +116,23 @@ class Processing {
   // }
 
   //implement
-  static  bool before(String date1, String date2) {
+  static bool before(String date1, String date2) {
     return true;
   }
 
   //implement
   static double timeBetween(int date1, int date2) {
-    return (date1 - date2)/1000000.0;
+    return (date1 - date2) / 1000000.0;
   }
 
-  static processData2(List<List> data, double xStart, double xFinish, double yFinish, int bowlId) async {
-
+  static processData2(List<List> data, double xStart, double xFinish,
+      double yFinish, int bowlId) async {
     // find start of throw
     int startTime = 0;
-    for(int i = 0; i< data.length; i++) {
-      var acc = sqrt(
-          pow(data[i][1], 2)
-              +
-              pow(data[i][2], 2)
-              +
-              pow(data[i][3], 2)
-      );
-      if(acc > 9.7 && acc < 9.9) {
+    for (int i = 0; i < data.length; i++) {
+      var acc =
+          sqrt(pow(data[i][1], 2) + pow(data[i][2], 2) + pow(data[i][3], 2));
+      if (acc > 9.7 && acc < 9.9) {
         startTime = data[i][0];
         break;
       }
@@ -149,37 +145,23 @@ class Processing {
     double cutoff = 0;
     // find end time
     int endTime = 3637028005646092;
-    for(int i = 15; i< data.length; i++) {
-      var acc1 = sqrt(
-          pow(data[i][1], 2)
-              +
-              pow(data[i][2], 2)
-              +
-              pow(data[i][3], 2)
-      );
-      var acc2 = sqrt(
-          pow(data[i-1][1], 2)
-              +
-              pow(data[i-1][2], 2)
-              +
-              pow(data[i-1][3], 2)
-      );
-      if(acc2 > acc1*2 && acc2 > cutoff) {
+    for (int i = 15; i < data.length; i++) {
+      var acc1 =
+          sqrt(pow(data[i][1], 2) + pow(data[i][2], 2) + pow(data[i][3], 2));
+      var acc2 = sqrt(pow(data[i - 1][1], 2) +
+          pow(data[i - 1][2], 2) +
+          pow(data[i - 1][3], 2));
+      if (acc2 > acc1 * 2 && acc2 > cutoff) {
         endTime = data[i][0];
         break;
       }
     }
 
-    double Vx = 19.812/timeBetween(endTime, startTime);
-    
-    double rps = sqrt(
-        pow(data[data.length - 3][4], 2)
-            +
-            pow(data[data.length - 3][5], 2)
-            +
-            pow(data[data.length - 3][6], 2)
-    );
+    double Vx = 19.812 / timeBetween(endTime, startTime);
 
+    double rps = sqrt(pow(data[data.length - 3][4], 2) +
+        pow(data[data.length - 3][5], 2) +
+        pow(data[data.length - 3][6], 2));
 
     double Speed = 0.6858 * rps / (2 * pi);
 
@@ -187,11 +169,13 @@ class Processing {
 
     int endIndex = data.length;
 
-    List<List<double>> points = [[0,0]];
+    List<List<double>> points = [
+      [0, 0]
+    ];
 
     //translate 1.225 before hook
-    for(int i = 1; i < 41; i++) {
-      points.add([points[i-1][0]+0.0299,i*1.0]);
+    for (int i = 1; i < 41; i++) {
+      points.add([points[i - 1][0] + 0.0299, i * 1.0]);
     }
 
     // hook pixel points
@@ -226,25 +210,23 @@ class Processing {
       [55, 0]
     ];
 
-    for(int i = 0; i < pixelPoints.length; i++) {
-      points.add(
-        [
-          pixelPoints[i][0]/21.77 - 2.25,
-          65 - pixelPoints[i][0]/5.615,
-        ]
-      );
+    for (int i = 0; i < pixelPoints.length; i++) {
+      points.add([
+        pixelPoints[i][0] / 21.77 - 2.25,
+        65 - pixelPoints[i][0] / 5.615,
+      ]);
     }
 
-    double curveFactor = 0.01*data[5][4]/Vx;
-    
+    double curveFactor = 0.01 * data[5][4] / Vx;
+
     //linear transformation 1
-    for(int i = 0; i < points.length; i++) {
-      points[i] = [points[i][0]*curveFactor, points[i][1]];
+    for (int i = 0; i < points.length; i++) {
+      points[i] = [points[i][0] * curveFactor, points[i][1]];
     }
 
     //linear transformation 2
     double traversalDistance = (xFinish - xStart) / points.length;
-    for(int i = 0; i < points.length; i++) {
+    for (int i = 0; i < points.length; i++) {
       points[i] = [points[i][0] + (i * traversalDistance), points[i][1]];
     }
 
@@ -255,13 +237,14 @@ class Processing {
     // double? xPos,
     // double? yPos,
     // DateTime? time,
-    for(int i = 0; i < points.length; i++) {
+    for (int i = 0; i < points.length; i++) {
       BowlingDatabase.instance.createPoint(Point(
         bowlId: bowlId,
         sequenceId: i,
         xPos: points[i][0],
         yPos: points[i][1],
-        time: DateTime.fromMicrosecondsSinceEpoch(startTime + (i*0.1*1000000).round()),
+        time: DateTime.fromMicrosecondsSinceEpoch(
+            startTime + (i * 0.1 * 1000000).round()),
       ));
     }
 
@@ -275,12 +258,33 @@ class Processing {
         zRotation: points[3][5],
         footPlacement: oldBowl.footPlacement,
         pinHit: oldBowl.pinHit,
-        timestamp: oldBowl.timestamp)
-    );
-
-
-
+        timestamp: oldBowl.timestamp));
   }
+// add check for placeholder
+
+  static Future<int> getScore(int gameId) async {
+    List<Bowl> bowls = await BowlingDatabase.instance.readBowls(gameId);
+
+    int score = 0;
 
 
+    for (int i = 0; i < 17; i += 2) {
+      if (bowls[i].pinHit == 10) {
+        if (bowls[i + 3].pinHit != -1) {
+          score += bowls[i + 2].pinHit + bowls[i + 3].pinHit + 10;
+        } else {
+          score += bowls[i + 2].pinHit + bowls[i + 4].pinHit + 10;
+        }
+      } else if(bowls[i].pinHit + bowls[i+1].pinHit == 10) {
+        score += bowls[i+2].pinHit + 10;
+      } else {
+        score += bowls[i+1].pinHit + bowls[i].pinHit;
+      }
+    }
+
+    for (int i = 18; i < bowls.length; i++) {
+      score += bowls[i].pinHit;
+    }
+    return score;
+  }
 }

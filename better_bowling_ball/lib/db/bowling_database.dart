@@ -157,6 +157,18 @@ class BowlingDatabase {
     return result.map((json) => Point.fromJson(json)).toList();
   }
 
+  Future<List<Bowl>> readBowls(int id) async {
+    final db = await instance.database;
+
+    final result = await db.query(tableBowls,
+        columns: BowlFields.values,
+        where: '${BowlFields.gameId} = ?',
+        whereArgs: [id],
+        orderBy: '${BowlFields.id} ASC');
+
+    return result.map((json) => Bowl.fromJson(json)).toList();
+  }
+
   Future<List<Game>> readAllGames() async {
     final db = await instance.database;
 

@@ -71,16 +71,17 @@ class Bowl {
           timestamp: timestamp ?? this.timestamp);
 
   static Bowl fromJson(Map<String, Object?> json) => Bowl(
-      id: json[BowlFields.id] as int?,
-      gamedID: json[BowlFields.gameId] as int?,
-      speed: json[BowlFields.speed] as double,
-      rpm: json[BowlFields.rpm] as double,
-      xRotation: json[BowlFields.xRotation] as double,
-      yRotation: json[BowlFields.yRotation] as double,
-      zRotation: json[BowlFields.zRotation] as double,
-      footPlacement: json[BowlFields.footPlacement] as String,
-      pinHit: json[BowlFields.pinHit] as int,
-      timestamp: json[BowlFields.timestamp] as DateTime);
+        id: json[BowlFields.id] as int?,
+        gamedID: json[BowlFields.gameId] as int?,
+        speed: json[BowlFields.speed] as double,
+        rpm: json[BowlFields.rpm] as double,
+        xRotation: json[BowlFields.xRotation] as double,
+        yRotation: json[BowlFields.yRotation] as double,
+        zRotation: json[BowlFields.zRotation] as double,
+        footPlacement: json[BowlFields.footPlacement] as String,
+        pinHit: json[BowlFields.pinHit] as int,
+        timestamp: DateTime.parse(json[BowlFields.timestamp] as String),
+      );
 
   Map<String, Object?> toJson() => {
         BowlFields.id: id,
@@ -89,8 +90,9 @@ class Bowl {
         BowlFields.rpm: rpm,
         BowlFields.xRotation: xRotation,
         BowlFields.yRotation: yRotation,
-        BowlFields.xRotation: xRotation,
+        BowlFields.zRotation: xRotation,
         BowlFields.footPlacement: footPlacement,
-        BowlFields.pinHit: timestamp
+        BowlFields.pinHit: pinHit,
+        BowlFields.timestamp: timestamp.toIso8601String(),
       };
 }

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:better_bowling_ball/db/bowling_database.dart';
 import 'package:better_bowling_ball/history/history_game_page.dart';
 import 'package:better_bowling_ball/model/model.game.dart';
@@ -25,23 +27,45 @@ class _HistoryPageState extends State<HistoryPage> {
   ListTile gameTile(Game game) {
     return ListTile(
       onTap: () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => HistoryGamePage(game: game)));
+        Navigator.of(context)
+            .push(
+              new MaterialPageRoute(
+                  builder: (_) => new HistoryGamePage(game: game)),
+            )
+            .then((val) => val ? loadGames() : null);
+        // Navigator.push(
+        //     context,
+        //     MaterialPageRoute(
+        //         builder: (context) => HistoryGamePage(game: game)));
       },
       title: Text(game.name),
-      subtitle: Text((DateFormat('dd/MM/yyyy, h:mm a').format(game.date))),
+      subtitle: Text((DateFormat('MM/dd/yyyy, h:mm a').format(game.date))),
       trailing: const Icon(Icons.arrow_right),
     );
   }
 
   @override
-  Widget build(BuildContext context) {
+  void initState() {
+    super.initState();
     loadGames();
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: const Text("History")),
+        appBar: AppBar(title: const Text("History"), actions: <Widget>[
+          Padding(
+              padding: const EdgeInsets.only(right: 20.0),
+              child: GestureDetector(
+                onTap: () {
+                  loadGames();
+                },
+                child: const Icon(
+                  Icons.refresh,
+                  size: 26.0,
+                ),
+              ))
+        ]),
         body: ListView.builder(
             itemCount: games.length,
             itemBuilder: (context, index) {

@@ -1,6 +1,6 @@
 import 'package:better_bowling_ball/bt_page.dart';
 import 'package:better_bowling_ball/history/history_page.dart';
-import 'package:better_bowling_ball/new_game_page.dart';
+import 'package:better_bowling_ball/new_game/new_game_page.dart';
 import 'package:better_bowling_ball/single_throw_page.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';

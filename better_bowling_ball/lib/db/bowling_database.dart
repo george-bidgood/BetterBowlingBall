@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:better_bowling_ball/model/model.bowl.dart';
@@ -78,12 +79,14 @@ class BowlingDatabase {
   Future<Game> createGame(Game game) async {
     final db = await instance.database;
     final id = await db.insert(tableGames, game.toJson());
+    log("Created game ${game.copy(id: id).toJson().toString()}");
     return game.copy(id: id);
   }
 
   Future<Bowl> createBowl(Bowl bowl) async {
     final db = await instance.database;
     final id = await db.insert(tableBowls, bowl.toJson());
+    log("created bowl: ${bowl.copy(id: id).toJson()}");
     return bowl.copy(id: id);
   }
 
@@ -93,21 +96,37 @@ class BowlingDatabase {
     return point.copy(id: id);
   }
 
+  deleteAllGames() async {
+    final db = await instance.database;
+    await db.delete(tableGames);
+  }
+
   Future<int> deleteGame(int id) async {
     final db = await instance.database;
 
-    return await db.delete(
+    await db.delete(
       tableGames,
       where: '${GameFields.id} = ?',
       whereArgs: [id],
     );
+
+    return await db.delete(
+      tableBowls,
+      where: '${BowlFields.gameId} = ?',
+      whereArgs: [id],
+    );
   }
 
-  // Future<Point> createPoints(List<Point> points) async {
-  //   final db = await instance.database;
-  //   final id = await db.insert(tableBowls, points.toJson());
-  //   return points[0].copy(id: id);
-  // }
+  Future<int> update(Bowl bowl) async {
+    final db = await instance.database;
+
+    return db.update(
+      tableGames,
+      bowl.toJson(),
+      where: '${BowlFields.id} = ?',
+      whereArgs: [bowl.id],
+    );
+  }
 
   // ------- READ --------
 
@@ -157,18 +176,6 @@ class BowlingDatabase {
     return result.map((json) => Point.fromJson(json)).toList();
   }
 
-  Future<List<Bowl>> readBowls(int id) async {
-    final db = await instance.database;
-
-    final result = await db.query(tableBowls,
-        columns: BowlFields.values,
-        where: '${BowlFields.gameId} = ?',
-        whereArgs: [id],
-        orderBy: '${BowlFields.id} ASC');
-
-    return result.map((json) => Bowl.fromJson(json)).toList();
-  }
-
   Future<List<Game>> readAllGames() async {
     final db = await instance.database;
 
@@ -180,27 +187,17 @@ class BowlingDatabase {
 
     return result.map((json) => Game.fromJson(json)).toList();
   }
-  //
-  // Future<int> update(Note note) async {
-  //   final db = await instance.database;
-  //
-  //   return db.update(
-  //     tableNotes,
-  //     note.toJson(),
-  //     where: '${NoteFields.id} = ?',
-  //     whereArgs: [note.id],
-  //   );
-  // }
 
-  Future<int> update(Bowl bowl) async {
+  Future<List<Bowl>> readBowls(int id) async {
     final db = await instance.database;
 
-    return db.update(
-      tableGames,
-      bowl.toJson(),
-      where: '${BowlFields.id} = ?',
-      whereArgs: [bowl.id],
-    );
+    final result = await db.query(tableBowls,
+        columns: BowlFields.values,
+        where: '${BowlFields.gameId} = ?',
+        whereArgs: [id],
+        orderBy: '${BowlFields.id} ASC');
+
+    return result.map((json) => Bowl.fromJson(json)).toList();
   }
 
   Future close() async {

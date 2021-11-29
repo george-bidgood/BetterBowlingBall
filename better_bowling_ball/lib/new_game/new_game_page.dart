@@ -1,28 +1,27 @@
 import 'package:better_bowling_ball/db/bowling_database.dart';
 import 'package:better_bowling_ball/model/model.game.dart';
+import 'package:better_bowling_ball/new_game/game_throw.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter_blue/flutter_blue.dart';
 
 class NewGamePage extends StatefulWidget {
-  NewGamePage({Key? key}) : super(key: key);
+  const NewGamePage({Key? key}) : super(key: key);
 
   @override
   _NewGamePageState createState() => _NewGamePageState();
 }
 
 class _NewGamePageState extends State<NewGamePage> {
-  createGame() {
-    BowlingDatabase.instance
-        .createGame(Game(
-            name: nameTextField.text, notes: notesTextField.text, date: date))
-        .whenComplete(() {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('Created Game')));
-      nameTextField.clear();
-      notesTextField.clear();
-      Navigator.pop(context);
-    });
+  createGame() async {
+    var game = await BowlingDatabase.instance.createGame(
+        Game(name: nameTextField.text, notes: notesTextField.text, date: date));
+    nameTextField.clear();
+    notesTextField.clear();
+
+    if (game.id != null) {
+      Navigator.push(context,
+          MaterialPageRoute(builder: (context) => GameThrow(game: game)));
+    } else {}
   }
 
   TextEditingController nameTextField = TextEditingController();

@@ -35,4 +35,15 @@ class GlobalData {
 
     return fixedData;
   }
+
+  static Future<List<List<int>>> dataFetcher() async {
+    writeCharacteristic.write([1]);
+    while (true) {
+      if (dataValues.length >= 300) {
+        List<List<int>> copyValues = [...dataValues];
+        dataValues = [];
+        return copyValues;
+      }
+    }
+  }
 }

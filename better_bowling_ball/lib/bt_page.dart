@@ -184,7 +184,6 @@ class _BtPageState extends State<BtPage> {
     }
     if (characteristic.properties.write) {
       GlobalData.writeCharacteristic = characteristic;
-      GlobalData.accessible = true;
       buttons.add(
         ButtonTheme(
           minWidth: 10,
@@ -202,7 +201,6 @@ class _BtPageState extends State<BtPage> {
       );
     }
     if (characteristic.properties.notify) {
-      int i = 0;
       buttons.add(
         ButtonTheme(
           minWidth: 10,
@@ -213,9 +211,8 @@ class _BtPageState extends State<BtPage> {
               child: Text('NOTIFY', style: TextStyle(color: Colors.white)),
               onPressed: () async {
                 characteristic.value.listen((value) {
-                  List<int> new_val = GlobalData.dataByteFixer(value);
-                  print(i);
-                  i++;
+                  GlobalData.dataValues.add(GlobalData.dataByteFixer(value));
+                  print(GlobalData.dataByteFixer(value));
                 });
                 await characteristic.setNotifyValue(true);
               },

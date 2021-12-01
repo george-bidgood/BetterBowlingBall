@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 
 class GlobalData {
-  static bool accessible = false;
   static FlutterBlue flutterBlue = FlutterBlue.instance;
   static List<List<int>> dataValues = [];
   static late BluetoothCharacteristic writeCharacteristic;
@@ -37,13 +36,12 @@ class GlobalData {
   }
 
   static Future<List<List<int>>> dataFetcher() async {
-    writeCharacteristic.write([1]);
-    while (true) {
-      if (dataValues.length >= 300) {
-        List<List<int>> copyValues = [...dataValues];
-        dataValues = [];
-        return copyValues;
-      }
+    writeCharacteristic.write([1], withoutResponse: true);
+    while (dataValues.length < 300) {
+      await Future.delayed(const Duration(milliseconds: 100));
     }
+    List<List<int>> copyValues = [...dataValues];
+    dataValues = [];
+    return copyValues;
   }
 }

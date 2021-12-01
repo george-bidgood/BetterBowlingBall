@@ -1,9 +1,12 @@
+import 'dart:developer';
+
 import 'package:better_bowling_ball/model/model.bowl.dart';
 import 'package:better_bowling_ball/db/bowling_database.dart';
 import 'package:flutter/material.dart';
 import 'package:better_bowling_ball/new_game/game_over.dart';
 import 'package:better_bowling_ball/model/model.game.dart';
 import 'package:sqflite/sqlite_api.dart';
+import 'package:better_bowling_ball/globals.dart';
 
 class GameThrow extends StatefulWidget {
   final Game game;
@@ -65,11 +68,21 @@ class _GameThrowState extends State<GameThrow> {
     });
   }
 
-  // Handle End Throw pressed
+  // Handle End Throw pressed      GlobalData.writeCharacteristic.write([1]);
+
   buttonPressed() {
     bool secondShot = false;
     if (currentShot % 2 == 1) {
       secondShot = true;
+    }
+
+    List<List<int>> dataValues = [];
+
+    if (!midThrow) {
+      GlobalData.dataFetcher().then((value) {
+        dataValues = value;
+        log(value.toString());
+      });
     }
 
     if (midThrow) {
@@ -142,6 +155,7 @@ class _GameThrowState extends State<GameThrow> {
           ],
         ),
       );
+      log("test");
     }
 
     setState(() {

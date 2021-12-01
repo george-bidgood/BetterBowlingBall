@@ -32,6 +32,7 @@ import 'dart:math';
 import 'package:better_bowling_ball/db/bowling_database.dart';
 import 'package:better_bowling_ball/model/model.point.dart';
 import 'package:better_bowling_ball/model/model.bowl.dart';
+import 'package:flutter/cupertino.dart';
 
 class Processing {
   // static processData(List<List> data, double xFinish, double yFinish, int bowlId) {
@@ -250,6 +251,10 @@ class Processing {
 
     var oldBowl = await BowlingDatabase.instance.readBowl(bowlId);
 
+    if (oldBowl.pinHit == -1) {
+      oldBowl = await BowlingDatabase.instance.readBowl(bowlId - 1);
+    }
+
     BowlingDatabase.instance.update(Bowl(
         speed: Speed,
         rpm: rps,
@@ -260,7 +265,6 @@ class Processing {
         pinHit: oldBowl.pinHit,
         timestamp: oldBowl.timestamp));
   }
-// add check for placeholder
 
   static Future<int> getScore(int gameId) async {
     List<Bowl> bowls = await BowlingDatabase.instance.readBowls(gameId);
@@ -287,4 +291,60 @@ class Processing {
     }
     return score;
   }
+
+  static processData3(List<List> data, int bowlId) async {
+
+    var oldBowl = await BowlingDatabase.instance.readBowl(bowlId);
+
+    if (oldBowl.pinHit == -1) {
+      oldBowl = await BowlingDatabase.instance.readBowl(bowlId - 1);
+    }
+    //
+    // int startTime = data[0][0];
+    // // for (int i = 0; i < data.length; i++) {
+    // //   var acc =
+    // //   sqrt(pow(data[i][1], 2) + pow(data[i][2], 2) + pow(data[i][3], 2));
+    // //   if (acc > 9.7 && acc < 9.9) {
+    // //     startTime = data[i][0];
+    // //     break;
+    // //   }
+    // // }
+    //
+    // //remove readings from before throw
+    // data.removeWhere((element) => element[0] < startTime);
+
+    //TODO add cutoff if necessary
+    double cutoff = 200;
+    double rps = 0;
+    // // find end time
+    // int endTime = 3637028005646092;
+    for (int i = 50; i < data.length; i++) {
+      double rpm = sqrt(pow(data[i][4], 2) +
+          pow(data[i][5], 2) +
+          pow(data[i][6], 2));
+
+      if (rpm < cutoff) {
+         rps = sqrt(pow(data[i-2][4], 2) +
+            pow(data[i-2][5], 2) +
+            pow(data[i-2][6], 2));
+        break;
+      }
+    }
+
+
+    double Speed = 0.6858 * rps / (2 * pi);
+    // double Speed = data[50]
+
+    BowlingDatabase.instance.update(Bowl(
+        speed: Speed,
+        rpm: rps,
+        xRotation: 10.0,
+        yRotation: 10.0,
+        zRotation: 10.0,
+        footPlacement: oldBowl.footPlacement,
+        pinHit: oldBowl.pinHit,
+        timestamp: oldBowl.timestamp));
+
+  }
+
 }

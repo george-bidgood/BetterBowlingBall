@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:better_bowling_ball/DataProcessing/bowl_processing.dart';
 import 'package:better_bowling_ball/model/model.bowl.dart';
 import 'package:better_bowling_ball/db/bowling_database.dart';
 import 'package:flutter/material.dart';
@@ -81,6 +82,7 @@ class _GameThrowState extends State<GameThrow> {
     if (!midThrow) {
       GlobalData.dataFetcher().then((value) {
         dataValues = value;
+        Processing.processData3(value, widget.game.id!);
         log(value.toString());
       });
     }

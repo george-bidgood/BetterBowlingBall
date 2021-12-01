@@ -151,10 +151,13 @@ class BowlingDatabase {
     final db = await instance.database;
 
     final maps = await db.query(
-      tableGames,
+      tableBowls,
       columns: BowlFields.values,
-      where: '${BowlFields.id} = ?',
+      where: '${BowlFields.gameId} = ?',
       whereArgs: [id],
+      orderBy: '${BowlFields.id} DSC',
+      limit: 1,
+      offset: id
     );
 
     if (maps.isNotEmpty) {

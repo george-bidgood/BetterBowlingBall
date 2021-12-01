@@ -126,8 +126,7 @@ class Processing {
     return (date1 - date2) / 1000000.0;
   }
 
-  static processData2(List<List> data, double xStart, double xFinish,
-      double yFinish, int bowlId) async {
+  static Future<List<double>> processData2(List<List> data,  int bowlId) async {
     // find start of throw
     int startTime = 0;
     for (int i = 0; i < data.length; i++) {
@@ -225,6 +224,9 @@ class Processing {
       points[i] = [points[i][0] * curveFactor, points[i][1]];
     }
 
+    double xFinish = 0.0;
+
+    double xStart = 0.0;
     //linear transformation 2
     double traversalDistance = (xFinish - xStart) / points.length;
     for (int i = 0; i < points.length; i++) {
@@ -264,6 +266,7 @@ class Processing {
         footPlacement: oldBowl.footPlacement,
         pinHit: oldBowl.pinHit,
         timestamp: oldBowl.timestamp));
+    return Future(() => [Speed, rps]);
   }
 
   static Future<int> getScore(int gameId) async {
@@ -294,10 +297,10 @@ class Processing {
 
   static processData3(List<List> data, int bowlId) async {
 
-    var oldBowl = await BowlingDatabase.instance.readBowl(bowlId);
+    var oldBowl = await BowlingDatabase.instance.readBowl(0);
 
     if (oldBowl.pinHit == -1) {
-      oldBowl = await BowlingDatabase.instance.readBowl(bowlId - 1);
+      oldBowl = await BowlingDatabase.instance.readBowl(1);
     }
     //
     // int startTime = data[0][0];
@@ -333,6 +336,8 @@ class Processing {
 
 
     double Speed = 0.6858 * rps / (2 * pi);
+    Speed = Speed / 1000;
+    rps = rps / 200;
     // double Speed = data[50]
 
     BowlingDatabase.instance.update(Bowl(

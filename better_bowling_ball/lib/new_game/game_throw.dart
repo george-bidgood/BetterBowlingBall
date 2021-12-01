@@ -25,6 +25,7 @@ class _GameThrowState extends State<GameThrow> {
   List<int> shotScores = <int>[];
   int currentShot = 0;
   bool dataRecieved = false;
+  bool dialogShowed = false;
   String rpm = "...";
   String speed = "...";
 
@@ -34,6 +35,7 @@ class _GameThrowState extends State<GameThrow> {
   bool midThrow = false;
 
   // Returns the alertDialog
+
   AlertDialog alertDialog() {
     return AlertDialog(
       title: const Text('Waiting for BT data...'),
@@ -68,8 +70,8 @@ class _GameThrowState extends State<GameThrow> {
 
     await BowlingDatabase.instance.createBowl(Bowl(
         gamedID: widget.game.id,
-        speed: 0.0,
-        rpm: 0.0,
+        speed: (pinHit == 0) ? 0 : 5.4,
+        rpm: (pinHit == 0) ? 0 : 67,
         xRotation: 0.0,
         yRotation: 0.0,
         zRotation: 0.0,
@@ -110,14 +112,16 @@ class _GameThrowState extends State<GameThrow> {
         log("dataRecieved");
         setState(() {
           dataRecieved = true;
-          rpm = "100";
-          speed = "30";
+          rpm = "67";
+          speed = "5.4";
         });
-        Navigator.of(context, rootNavigator: true).pop('dialog');
-        showDialog(
-            barrierDismissible: false,
-            context: context,
-            builder: (context) => alertDialog());
+        if (dialogShowed) {
+          Navigator.of(context, rootNavigator: true).pop('dialog');
+          showDialog(
+              barrierDismissible: false,
+              context: context,
+              builder: (context) => alertDialog());
+        }
       });
 
       // GlobalData.dataFetcher().then((value) {
@@ -129,14 +133,14 @@ class _GameThrowState extends State<GameThrow> {
       //     rpm = "100";
       //     speed = "30";
       //   });
-      Navigator.of(context, rootNavigator: true).pop('dialog');
-      showDialog(
-          barrierDismissible: false,
-          context: context,
-          builder: (context) => alertDialog());
+      // Navigator.of(context, rootNavigator: true).pop('dialog');
+      // showDialog(
+      //     barrierDismissible: false,
+      //     context: context,
+      //     builder: (context) => alertDialog());
 
-      //   log(value.toString());
-      // });
+      // //   log(value.toString());
+      // // });
     }
 
     if (midThrow) {
@@ -195,6 +199,7 @@ class _GameThrowState extends State<GameThrow> {
           barrierDismissible: false,
           context: context,
           builder: (context) => alertDialog());
+      dialogShowed = true;
     }
 
     setState(() {

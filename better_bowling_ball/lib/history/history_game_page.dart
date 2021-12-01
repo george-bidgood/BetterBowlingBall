@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:better_bowling_ball/DataProcessing/bowl_processing.dart';
 import 'package:better_bowling_ball/db/bowling_database.dart';
 import 'package:better_bowling_ball/model/model.bowl.dart';
 import 'package:better_bowling_ball/model/model.game.dart';
@@ -17,13 +18,19 @@ class HistoryGamePage extends StatefulWidget {
 
 class _HistoryGamePageState extends State<HistoryGamePage> {
   // list of games to populate ListView
+  var score = 0;
   var bowls = <Bowl>[];
   List<int> shotScores = List.generate(21, (index) => -1);
   List<int> frameScores = List.generate(10, (index) => -1);
 
   // calculate the score of the game
   calculateScore() {
-    return 300;
+    Processing.getScore(widget.game.id!).then((value) {
+      log(value.toString());
+      setState(() {
+        score = value;
+      });
+    });
   }
 
   // Populate list of games with DB data
@@ -51,6 +58,8 @@ class _HistoryGamePageState extends State<HistoryGamePage> {
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text("Shot 1: ${shot1.pinHit}"),
           Text("\t footPlacement: ${shot1.footPlacement}"),
+          Text("\t rpm: ${shot1.rpm}"),
+          Text("\t speed: ${shot1.speed}"),
           (() {
             if (shot2.pinHit != -1) {
               return Column(
@@ -58,6 +67,8 @@ class _HistoryGamePageState extends State<HistoryGamePage> {
                 children: [
                   Text("Shot 2: ${shot2.pinHit}"),
                   Text("\t footPlacement: ${shot2.footPlacement}"),
+                  Text("\t rpm: ${shot2.rpm}"),
+                  Text("\t speed: ${shot2.speed}"),
                 ],
               );
             }
@@ -152,6 +163,7 @@ class _HistoryGamePageState extends State<HistoryGamePage> {
   void initState() {
     super.initState();
     loadBowls();
+    calculateScore();
   }
 
   @override
@@ -172,7 +184,7 @@ class _HistoryGamePageState extends State<HistoryGamePage> {
                 child: Column(
                   children: [
                     Text(
-                      "Final Score: ${calculateScore()}",
+                      "Final Score: $score",
                       style: const TextStyle(fontSize: 20),
                     ),
                     const SizedBox(height: 10),

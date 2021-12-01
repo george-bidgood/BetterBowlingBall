@@ -1,3 +1,4 @@
+import 'package:better_bowling_ball/DataProcessing/bowl_processing.dart';
 import 'package:better_bowling_ball/main.dart';
 import 'package:flutter/material.dart';
 import 'package:better_bowling_ball/model/model.game.dart';
@@ -11,11 +12,23 @@ class GameOver extends StatefulWidget {
   _GameOverState createState() => _GameOverState();
 }
 
-int calculateGameScore() {
-  return 0;
-}
-
 class _GameOverState extends State<GameOver> {
+  int score = 0;
+
+  calculateGameScore() {
+    Processing.getScore(widget.game.id!).then((value) {
+      setState(() {
+        score = value;
+      });
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    calculateGameScore();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,7 +42,7 @@ class _GameOverState extends State<GameOver> {
           style: TextStyle(fontSize: 20),
         )),
         const SizedBox(height: 40),
-        Center(child: Text("Final Score: ${calculateGameScore()}")),
+        Center(child: Text("Final Score: $score")),
         const SizedBox(height: 40),
         Center(
             child: ElevatedButton(

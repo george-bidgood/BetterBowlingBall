@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const WelcomePage(title: 'Welcome, <username>'),
+      home: const WelcomePage(title: 'Welcome!'),
       routes: {
         'newGame': (_) => NewGamePage(),
         'singleThrow': (_) => const SingleThrowPage(),

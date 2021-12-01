@@ -24,6 +24,7 @@ class _GameThrowState extends State<GameThrow> {
   // Data
   List<int> shotScores = <int>[];
   int currentShot = 0;
+  bool dataRecieved = false;
   String rpm = "...";
   String speed = "...";
 
@@ -31,6 +32,33 @@ class _GameThrowState extends State<GameThrow> {
   List<bool> selectedPins = <bool>[];
   double _currentSliderValue = 50;
   bool midThrow = false;
+
+  // Returns the alertDialog
+  AlertDialog alertDialog() {
+    return AlertDialog(
+      title: const Text('Waiting for BT data...'),
+      content: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+        dataRecieved
+            ? const SizedBox(height: 0)
+            : const CircularProgressIndicator(),
+        Text('RPM: $rpm \nSpeed: $speed')
+      ]),
+      actions: <Widget>[
+        TextButton(
+          onPressed: () {
+            setState(() {
+              dataRecieved = false;
+              rpm = "...";
+              speed = "...";
+            });
+            Navigator.of(context).pop(true);
+          },
+          child:
+              dataRecieved ? const Text('Continue') : const SizedBox(height: 0),
+        ),
+      ],
+    );
+  }
 
   // save the shot into the database
   saveShot(bool empty) async {
@@ -69,8 +97,6 @@ class _GameThrowState extends State<GameThrow> {
     });
   }
 
-  // Handle End Throw pressed      GlobalData.writeCharacteristic.write([1]);
-
   buttonPressed() {
     bool secondShot = false;
     if (currentShot % 2 == 1) {
@@ -80,11 +106,37 @@ class _GameThrowState extends State<GameThrow> {
     List<List<int>> dataValues = [];
 
     if (!midThrow) {
-      GlobalData.dataFetcher().then((value) {
-        dataValues = value;
-        Processing.processData3(value, widget.game.id!);
-        log(value.toString());
+      Future.delayed(const Duration(seconds: 5)).then((value) {
+        log("dataRecieved");
+        setState(() {
+          dataRecieved = true;
+          rpm = "100";
+          speed = "30";
+        });
+        Navigator.of(context, rootNavigator: true).pop('dialog');
+        showDialog(
+            barrierDismissible: false,
+            context: context,
+            builder: (context) => alertDialog());
       });
+
+      // GlobalData.dataFetcher().then((value) {
+      //   dataValues = value;
+      //   Processing.processData3(value, widget.game.id!);
+
+      //   setState(() {
+      //     dataRecieved = true;
+      //     rpm = "100";
+      //     speed = "30";
+      //   });
+      Navigator.of(context, rootNavigator: true).pop('dialog');
+      showDialog(
+          barrierDismissible: false,
+          context: context,
+          builder: (context) => alertDialog());
+
+      //   log(value.toString());
+      // });
     }
 
     if (midThrow) {
@@ -140,24 +192,9 @@ class _GameThrowState extends State<GameThrow> {
 
       // wait for bt data:
       showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Waiting for BT data...'),
-          content: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                const CircularProgressIndicator(),
-                Text('RPM: $rpm\nSpeed: $speed')
-              ]),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(true),
-              child: const Text('Continue'),
-            ),
-          ],
-        ),
-      );
-      log("test");
+          barrierDismissible: false,
+          context: context,
+          builder: (context) => alertDialog());
     }
 
     setState(() {
